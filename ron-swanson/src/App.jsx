@@ -1,49 +1,32 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
-
-
-import './App.css'
+import React, { useEffect, useState, useRef } from 'react';
 
 function App() {
-  const [quote, setQuote] = useState("");
-
+  const [data, setData] = useState("");
   useEffect(() => {
-    const fetchQuote = () => {
+    const fetchData = () => {
       fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('error');
-          }
-          return response.json();
-        })
+        .then(res => res.json())
         .then(data => {
-          if (Array.isArray(data) && data.length > 0) {
-            setQuote(data[0]);
-          } else {
-            throw new Error('error');
-          }
+          setData(data[0]);
+          setTimeout(fetchData, 30000);
         })
-        .catch(error => {
-          console.error('Error fetching quote:', error);
-        });
+        .catch(console.error);
     };
 
-   
-    fetchQuote();
+   return () => fetchData();
 
-    const intervalId = setInterval(fetchQuote, 30000);
-    
-    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <div>
       <h1>Ron Swanson says:</h1>
-      <h1>{quote}</h1>
+      
+      <h2>{data}</h2>
+  
     </div>
   );
 }
 
-export default App
+export default App;
 
 
